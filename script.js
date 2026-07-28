@@ -29,6 +29,13 @@ const modeBtn = modeWrapper.querySelectorAll("button");
 const difficultyBtn = difficultyWrapper.querySelectorAll("button");
 let formatValue;
 
+const initDiff = difficultyWrapper.querySelector("div").querySelector("button");
+initDiff.classList.add("active");
+
+const initMode = modeWrapper.querySelector("div").querySelector("button");
+initMode.classList.add("active");
+formatValue = initMode.value;
+
 if (best != null) {
   bestScore.innerText = best + " WPM";
 }
@@ -63,14 +70,12 @@ fetch("./typing-speed-test-main/data.json")
     medium = data.medium;
     hard = data.hard;
 
-    defaultSetting();
+    (function () {
+      words = easy[Math.floor(Math.random() * easy.length)];
+      elementString();
+    })();
   })
   .catch((error) => console.error("Error:", error));
-
-function defaultSetting() {
-  words = easy[Math.floor(Math.random() * easy.length)];
-  elementString();
-}
 
 function getDifficulty(e) {
   if (e.target.value === "easy") {
@@ -85,6 +90,7 @@ function getDifficulty(e) {
 }
 
 document.getElementById("difficulty").addEventListener("change", getDifficulty);
+
 format.addEventListener("change", () => {
   formatValue = format.value;
 });
@@ -293,8 +299,7 @@ document.addEventListener("keyup", (e) => {
   span[currentIndex].classList.add("current");
 });
 
-restart.addEventListener("mousedown", (e) => {
-  e.preventDefault();
+function restartTest() {
   testStart = true;
   timePassed = 0;
   restart.style.color = "white";
@@ -335,4 +340,12 @@ restart.addEventListener("mousedown", (e) => {
 
   span[currentIndex].classList.add("current");
   base.classList.add("hidden");
+}
+
+document.addEventListener("keyup", (e) => {
+  if (e.shiftKey) {
+    if ((e.key = "Control")) restartTest();
+  }
 });
+
+restart.addEventListener("mousedown", restartTest);
