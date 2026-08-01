@@ -287,11 +287,16 @@ document.addEventListener("keyup", (e) => {
         datasets: [
           {
             borderColor: "rgb(75, 192, 192)",
-            label: "Progression",
+
             data: graphWpm,
             tension: 0.3,
           },
         ],
+      },
+      options: {
+        legend: {
+          display: false,
+        },
       },
     });
 
