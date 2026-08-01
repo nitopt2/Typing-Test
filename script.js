@@ -27,7 +27,15 @@ const difficultyWrapper = document.querySelector(".difficulty-wrapper");
 const modeWrapper = document.querySelector(".mode-wrapper");
 const modeBtn = modeWrapper.querySelectorAll("button");
 const difficultyBtn = difficultyWrapper.querySelectorAll("button");
+const ctx = document.getElementById("chart");
 let formatValue;
+let labels;
+let currentWpm;
+let baseTime;
+let graphTime = [];
+let graphWpm = [];
+let wpmList;
+let wpmInterval;
 
 const initDiff = difficultyWrapper.querySelector("div").querySelector("button");
 initDiff.classList.add("active");
@@ -135,8 +143,6 @@ function timeMode() {
       return;
     }
 
-    timePassed++;
-
     incrementedTime--;
     seconds = String(incrementedTime).padStart(2, "0");
 
@@ -150,7 +156,7 @@ function passage() {
 
   time = setInterval(() => {
     incrementedTime++;
-    timePassed++;
+
     let minutes = Math.floor(incrementedTime / 60);
 
     let second = incrementedTime % 60;
@@ -166,9 +172,14 @@ function passage() {
 }
 
 function getWpm() {
-  setInterval(() => {
-    if (timePassed === 0) return;
-    wpm.innerText = Math.floor((correct / 5) * (60 / timePassed));
+  wpmList = [];
+  graphTime = [];
+  graphWpm = [];
+  wpmInterval = setInterval(() => {
+    timePassed++;
+    currentWpm = Math.floor((correct / 5) * (60 / timePassed));
+    wpm.innerText = currentWpm;
+    wpmList.push(currentWpm);
   }, 1000);
 }
 
@@ -251,6 +262,38 @@ document.addEventListener("keyup", (e) => {
     restart.style.background = "white";
     restart.style.color = "hsl(0, 0%, 7%)";
     base.classList.remove("hidden");
+
+    if (wpmInterval) {
+      clearInterval(wpmInterval);
+    }
+
+    timePassed = Math.floor(timePassed / 10);
+    if (timePassed < 1) timePassed = 1;
+
+    graphTime.push(timePassed);
+    baseTime = timePassed;
+
+    for (let i = 0; i < 10; i++) {
+      timePassed = baseTime + timePassed;
+
+      graphTime.push(timePassed);
+      if (baseTime * 10 >= timePassed) graphWpm.push(wpmList[timePassed]);
+    }
+
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: graphTime,
+        datasets: [
+          {
+            borderColor: "rgb(75, 192, 192)",
+            label: "Progression",
+            data: graphWpm,
+            tension: 0.3,
+          },
+        ],
+      },
+    });
 
     if (saveWpm <= best) {
       document.querySelector(".base-img").classList.remove("hidden");
@@ -340,11 +383,12 @@ function restartTest() {
 
   span[currentIndex].classList.add("current");
   base.classList.add("hidden");
+  getWpm();
 }
 
-document.addEventListener("keyup", (e) => {
+document.addEventListener("keydown", (e) => {
   if (e.shiftKey) {
-    if ((e.key = "Control")) restartTest();
+    if (e.key === "Alt") restartTest();
   }
 });
 

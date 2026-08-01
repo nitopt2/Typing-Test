@@ -43,7 +43,7 @@
       </div>
 
       <div class="result hidden">
-        <div class="base hidden">
+        <div class="base">
           <img
             class="base-img"
             src="./typing-speed-test-main/assets/images/icon-completed.svg"
@@ -62,23 +62,25 @@
         <div class="stat-result">
           <div class="wrapper">
             <span>WPM:</span>
-            <span id="wpm-result">85</span>
+            <span id="wpm-result"></span>
           </div>
 
           <div class="wrapper">
             <span>Accuracy:</span>
-            <span id="accuracy-result">90%</span>
+            <span id="accuracy-result"></span>
           </div>
 
           <div class="wrapper">
             <span>Characters</span>
             <div class="characters">
-              <span id="correct">120</span>
+              <span id="correct"></span>
               <span>/</span>
-              <span id="incorrect">5</span>
+              <span id="incorrect"></span>
             </div>
           </div>
         </div>
+
+        <canvas id="chart"></canvas>
       </div>
 
       <div class="test">
@@ -159,5 +161,6 @@
         alt=""
       />
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
   </body>
 </html>
