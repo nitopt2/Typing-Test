@@ -37,6 +37,7 @@ let graphWpm = [];
 let wpmList;
 let chart;
 let wpmInterval;
+let allWords;
 
 const initDiff = difficultyWrapper.querySelector("div").querySelector("button");
 initDiff.classList.add("active");
@@ -58,14 +59,19 @@ window.addEventListener("keydown", function (e) {
 });
 
 function elementString() {
-  let textString = words.text.split("");
+  let textString = words.text.split(" ");
 
-  let array = textString.map((value) => {
-    return `<span>${value}</span>`;
+  let arr = textString.map((val) => {
+    return `<div>${val}</div>`;
   });
 
-  let fullHTML = array.join("");
+  let fullHTML = arr.join("");
+
   textBox.innerHTML = fullHTML;
+  allWords = textBox.querySelectorAll("div");
+  allWords.forEach((word) => {
+    word.classList.add("word");
+  });
 }
 
 let easy;
@@ -179,10 +185,9 @@ function getWpm() {
   wpmInterval = setInterval(() => {
     timePassed++;
     currentWpm = Math.floor((correct / 5) * (60 / timePassed));
-    console.log(timePassed);
+
     wpm.innerText = currentWpm;
     wpmList.push(currentWpm);
-    console.log(wpmList);
   }, 1000);
 }
 
@@ -209,9 +214,7 @@ function takeTest() {
     select.disabled = true;
   });
 
-  span = textBox.querySelectorAll("span");
   testStart = true;
-  span[currentIndex].classList.add("current");
   textBox.classList.remove("not-started");
   document.querySelector(".overlay").classList.add("hidden");
 }
@@ -240,14 +243,14 @@ document.addEventListener("keyup", (e) => {
 
   if (testStart === false) return;
 
-  if (e.key === current.innerText) {
-    current.classList.add("correct");
-    correct++;
-  } else {
-    current.classList.add("incorrect");
-    incorrect++;
-  }
-  current.classList.remove("current");
+  // if (e.key === current.innerText) {
+  //   current.classList.add("correct");
+  //   correct++;
+  // } else {
+  //   current.classList.add("incorrect");
+  //   incorrect++;
+  // }
+  // current.classList.remove("current");
 
   accuracy.innerText =
     Math.floor(((span.length - incorrect) / span.length) * 100) + "%";
@@ -354,12 +357,12 @@ document.addEventListener("keyup", (e) => {
     return;
   }
 
-  currentIndex++;
+  // currentIndex++;
   current.scrollIntoView({
     block: "center",
     behavior: "smooth",
   });
-  span[currentIndex].classList.add("current");
+  div[currentIndex].classList.add("current");
 });
 
 function restartTest() {

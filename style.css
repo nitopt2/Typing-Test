@@ -282,15 +282,18 @@ main {
 #text {
   display: flex;
   flex-wrap: wrap;
-  word-break: normal;
-  overflow-wrap: break-word;
 }
 
 #text.not-started {
   filter: blur(10px);
 }
 
-#text span {
+.word {
+  margin: 0.1em;
+  font-size: 2rem;
+}
+
+/* #text span {
   font-size: 2rem;
   color: hsl(240, 3%, 46%);
 
@@ -303,7 +306,7 @@ main {
 #text span.incorrect {
   color: hsl(354, 63%, 57%);
   text-decoration: underline;
-}
+} */
 
 .current {
   border-radius: 0.3rem;
