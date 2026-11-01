@@ -8,7 +8,6 @@ let words;
 let correct = 0;
 let testStart = false;
 const btn = document.querySelectorAll("button");
-let span;
 const select = document.querySelectorAll("select");
 const format = document.getElementById("format");
 const restart = document.getElementById("restart");
@@ -38,6 +37,10 @@ let wpmList;
 let chart;
 let wpmInterval;
 let allWords;
+let wordIndex = 1;
+let arr;
+let current;
+let lengthString;
 
 const initDiff = difficultyWrapper.querySelector("div").querySelector("button");
 initDiff.classList.add("active");
@@ -59,9 +62,11 @@ window.addEventListener("keydown", function (e) {
 });
 
 function elementString() {
+  lengthString = words.text.split("");
+
   let textString = words.text.split(" ");
 
-  let arr = textString.map((val) => {
+  arr = textString.map((val) => {
     return `<div>${val}</div>`;
   });
 
@@ -70,6 +75,16 @@ function elementString() {
   textBox.innerHTML = fullHTML;
   allWords = textBox.querySelectorAll("div");
   allWords.forEach((word) => {
+    word.dataset.wordIndex = wordIndex;
+    wordIndex++;
+    let letterString = word.innerText.split("");
+
+    arr = letterString.map((val) => {
+      return `<letter>${val}</letter>`;
+    });
+
+    fullHTML = arr.join("");
+    word.innerHTML = fullHTML;
     word.classList.add("word");
   });
 }
@@ -191,7 +206,7 @@ function getWpm() {
   }, 1000);
 }
 
-let currentIndex = 0;
+let currentIndex = 1;
 let incorrect = 0;
 
 function takeTest() {
@@ -235,34 +250,51 @@ const ignore = [
   "Tab",
 ];
 
+let currentWord;
+let letterIndex = 0;
 document.addEventListener("keyup", (e) => {
   if (ignore.includes(e.key)) return;
   let endWpm = timePassed;
-
-  current = document.querySelector(".current");
+  currentWord = document.querySelector(`[data-word-index ="${currentIndex}"]`);
+  currentLetter = currentWord.querySelectorAll("letter");
 
   if (testStart === false) return;
 
-  // if (e.key === current.innerText) {
-  //   current.classList.add("correct");
-  //   correct++;
-  // } else {
-  //   current.classList.add("incorrect");
-  //   incorrect++;
-  // }
-  // current.classList.remove("current");
+  if (letterIndex === currentLetter.length) {
+    if (e.key === " ") {
+      currentIndex++;
+      letterIndex = 0;
+    }
+  } else {
+    currentLetter[letterIndex].classList.add("current");
+    current = document.querySelector(".current");
+    if (e.key === current.innerText) {
+      current.classList.add("correct");
+      correct++;
+    } else {
+      current.classList.add("incorrect");
+      incorrect++;
+    }
+    letterIndex++;
+  }
+
+  current.classList.remove("current");
 
   accuracy.innerText =
-    Math.floor(((span.length - incorrect) / span.length) * 100) + "%";
+    Math.floor(
+      ((lengthString.length - incorrect) / lengthString.length) * 100,
+    ) + "%";
 
-  if (currentIndex >= span.length - 1) {
-    // Type end
+  if (currentIndex >= allWords.length && letterIndex === currentLetter.length) {
+    // Test end
     testStart = false;
     result.classList.remove("hidden");
     test.classList.add("hidden");
     saveWpm = Math.floor((correct / 5) * (60 / timePassed));
     saveAccuracy =
-      Math.floor(((span.length - incorrect) / span.length) * 100) + "%";
+      Math.floor(
+        ((lengthString.length - incorrect) / lengthString.length) * 100,
+      ) + "%";
     wpmResult.innerText = saveWpm;
     correctResult.innerText = correct;
     incorrectResult.innerText = incorrect;
@@ -357,12 +389,10 @@ document.addEventListener("keyup", (e) => {
     return;
   }
 
-  // currentIndex++;
   current.scrollIntoView({
     block: "center",
     behavior: "smooth",
   });
-  div[currentIndex].classList.add("current");
 });
 
 function restartTest() {
@@ -372,7 +402,7 @@ function restartTest() {
   restart.style.background = "hsl(0, 0%, 15%)";
   restart.firstChild.nodeValue = "Restart Test";
   document.querySelector(".confetti-wrapper").classList.add("hidden");
-  if (currentIndex >= span.length - 1) {
+  if (currentIndex >= lengthString.length - 1) {
     result.classList.add("hidden");
   }
   test.classList.remove("hidden");
@@ -396,15 +426,15 @@ function restartTest() {
 
   currentIndex = 0;
 
-  span.forEach((span) => {
-    span.removeAttribute("class");
+  lengthString.forEach((lengthString) => {
+    lengthString.removeAttribute("class");
   });
 
   select.forEach((select) => {
     select.disabled = true;
   });
 
-  span[currentIndex].classList.add("current");
+  lengthString[currentIndex].classList.add("current");
   base.classList.add("hidden");
   if (wpmInterval) {
     clearInterval(wpmInterval);
