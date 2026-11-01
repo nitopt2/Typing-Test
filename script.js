@@ -182,6 +182,7 @@ function getWpm() {
     console.log(timePassed);
     wpm.innerText = currentWpm;
     wpmList.push(currentWpm);
+    console.log(wpmList);
   }, 1000);
 }
 
@@ -252,7 +253,7 @@ document.addEventListener("keyup", (e) => {
     Math.floor(((span.length - incorrect) / span.length) * 100) + "%";
 
   if (currentIndex >= span.length - 1) {
-    // Game end
+    // Type end
     testStart = false;
     result.classList.remove("hidden");
     test.classList.add("hidden");
@@ -279,12 +280,12 @@ document.addEventListener("keyup", (e) => {
     baseTime = timePassed; //Helps configure graph points
 
     for (let i = 0; i < 11; i++) {
-      timePassed = baseTime + timePassed;
       if (timePassed < endWpm) {
         graphTime.push(timePassed);
       }
 
-      if (baseTime * 10 >= timePassed) graphWpm.push(wpmList[timePassed]); //Pull from array the plotted wpm
+      graphWpm.push(wpmList[timePassed - 1]); //Pull from array the plotted wpm
+      timePassed = baseTime + timePassed;
     }
     if (chart) {
       chart.data.datasets[0].data = graphWpm;
