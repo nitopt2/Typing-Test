@@ -279,7 +279,7 @@ document.addEventListener("keyup", (e) => {
     graphTime.push(1);
     baseTime = timePassed; //Helps configure graph points
 
-    for (let i = 0; i < 11; i++) {
+    while (timePassed <= endWpm) {
       if (timePassed < endWpm) {
         graphTime.push(timePassed);
       }
