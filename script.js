@@ -35,6 +35,7 @@ let baseTime;
 let graphTime = [];
 let graphWpm = [];
 let wpmList;
+let chart;
 let wpmInterval;
 
 const initDiff = difficultyWrapper.querySelector("div").querySelector("button");
@@ -178,6 +179,7 @@ function getWpm() {
   wpmInterval = setInterval(() => {
     timePassed++;
     currentWpm = Math.floor((correct / 5) * (60 / timePassed));
+    console.log(timePassed);
     wpm.innerText = currentWpm;
     wpmList.push(currentWpm);
   }, 1000);
@@ -231,6 +233,7 @@ const ignore = [
 
 document.addEventListener("keyup", (e) => {
   if (ignore.includes(e.key)) return;
+  let endWpm = timePassed;
 
   current = document.querySelector(".current");
 
@@ -249,6 +252,7 @@ document.addEventListener("keyup", (e) => {
     Math.floor(((span.length - incorrect) / span.length) * 100) + "%";
 
   if (currentIndex >= span.length - 1) {
+    // Game end
     testStart = false;
     result.classList.remove("hidden");
     test.classList.add("hidden");
@@ -268,39 +272,47 @@ document.addEventListener("keyup", (e) => {
     }
 
     timePassed = Math.floor(timePassed / 10);
+
     if (timePassed < 1) timePassed = 1;
 
-    graphTime.push(timePassed);
-    baseTime = timePassed;
+    graphTime.push(1);
+    baseTime = timePassed; //Helps configure graph points
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 11; i++) {
       timePassed = baseTime + timePassed;
+      if (timePassed < endWpm) {
+        graphTime.push(timePassed);
+      }
 
-      graphTime.push(timePassed);
-      if (baseTime * 10 >= timePassed) graphWpm.push(wpmList[timePassed]);
+      if (baseTime * 10 >= timePassed) graphWpm.push(wpmList[timePassed]); //Pull from array the plotted wpm
+    }
+    if (chart) {
+      chart.data.datasets[0].data = graphWpm;
+      chart.data.labels = graphTime;
+      chart.update();
+    } else {
+      chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: graphTime,
+          datasets: [
+            {
+              borderColor: "rgb(75, 192, 192)",
+              data: graphWpm,
+              tension: 0.3,
+            },
+          ],
+        },
+        options: {
+          legend: {
+            display: false,
+          },
+        },
+      });
     }
 
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: graphTime,
-        datasets: [
-          {
-            borderColor: "rgb(75, 192, 192)",
-
-            data: graphWpm,
-            tension: 0.3,
-          },
-        ],
-      },
-      options: {
-        legend: {
-          display: false,
-        },
-      },
-    });
-
     if (saveWpm <= best) {
+      //Normal run screen.
       document.querySelector(".base-img").classList.remove("hidden");
       document.querySelector(".highscore").classList.add("hidden");
       document.querySelector(".confetti-wrapper").classList.add("hidden");
@@ -311,6 +323,7 @@ document.addEventListener("keyup", (e) => {
     }
 
     if (best === null) {
+      //Baseline screen
       restart.firstChild.nodeValue = "Beat this Score";
       document.querySelector(".highscore").classList.add("hidden");
       messageTitle.innerText = "Baseline Established!";
@@ -323,6 +336,7 @@ document.addEventListener("keyup", (e) => {
     }
 
     if (saveWpm > best) {
+      //High score screen
       localStorage.setItem("bestScore", saveWpm);
       best = localStorage.getItem("bestScore");
       bestScore.innerText = best + " WPM";
@@ -388,6 +402,9 @@ function restartTest() {
 
   span[currentIndex].classList.add("current");
   base.classList.add("hidden");
+  if (wpmInterval) {
+    clearInterval(wpmInterval);
+  }
   getWpm();
 }
 
