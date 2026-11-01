@@ -67,7 +67,7 @@ function elementString() {
   let textString = words.text.split(" ");
 
   arr = textString.map((val) => {
-    return `<div>${val}</div>`;
+    return `<div>${val} </div>`;
   });
 
   let fullHTML = arr.join("");
@@ -78,7 +78,6 @@ function elementString() {
     word.dataset.wordIndex = wordIndex;
     wordIndex++;
     let letterString = word.innerText.split("");
-
     arr = letterString.map((val) => {
       return `<letter>${val}</letter>`;
     });
@@ -260,32 +259,10 @@ document.addEventListener("keyup", (e) => {
 
   if (testStart === false) return;
 
-  if (letterIndex === currentLetter.length) {
-    if (e.key === " ") {
-      currentIndex++;
-      letterIndex = 0;
-    }
-  } else {
-    currentLetter[letterIndex].classList.add("current");
-    current = document.querySelector(".current");
-    if (e.key === current.innerText) {
-      current.classList.add("correct");
-      correct++;
-    } else {
-      current.classList.add("incorrect");
-      incorrect++;
-    }
-    letterIndex++;
-  }
-
-  current.classList.remove("current");
-
-  accuracy.innerText =
-    Math.floor(
-      ((lengthString.length - incorrect) / lengthString.length) * 100,
-    ) + "%";
-
-  if (currentIndex >= allWords.length && letterIndex === currentLetter.length) {
+  if (
+    currentIndex >= allWords.length &&
+    letterIndex === currentLetter.length - 1
+  ) {
     // Test end
     testStart = false;
     result.classList.remove("hidden");
@@ -387,7 +364,30 @@ document.addEventListener("keyup", (e) => {
     }
 
     return;
+  } else if (letterIndex === currentLetter.length) {
+    if (e.key === " ") {
+      currentIndex++;
+      letterIndex = 0;
+    } else incorrect++;
+  } else {
+    currentLetter[letterIndex].classList.add("current");
+    current = document.querySelector(".current");
+    if (e.key === current.innerText) {
+      current.classList.add("correct");
+      correct++;
+    } else {
+      current.classList.add("incorrect");
+      incorrect++;
+    }
+    current.classList.remove("current");
+    letterIndex++;
+    currentLetter[letterIndex].classList.add("current");
   }
+
+  accuracy.innerText =
+    Math.floor(
+      ((lengthString.length - incorrect) / lengthString.length) * 100,
+    ) + "%";
 
   current.scrollIntoView({
     block: "center",
@@ -402,7 +402,7 @@ function restartTest() {
   restart.style.background = "hsl(0, 0%, 15%)";
   restart.firstChild.nodeValue = "Restart Test";
   document.querySelector(".confetti-wrapper").classList.add("hidden");
-  if (currentIndex >= lengthString.length - 1) {
+  if (currentIndex >= allWords.length - 1) {
     result.classList.add("hidden");
   }
   test.classList.remove("hidden");
@@ -426,15 +426,10 @@ function restartTest() {
 
   currentIndex = 0;
 
-  lengthString.forEach((lengthString) => {
-    lengthString.removeAttribute("class");
-  });
-
   select.forEach((select) => {
     select.disabled = true;
   });
 
-  lengthString[currentIndex].classList.add("current");
   base.classList.add("hidden");
   if (wpmInterval) {
     clearInterval(wpmInterval);
