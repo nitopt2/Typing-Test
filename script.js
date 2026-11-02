@@ -114,7 +114,7 @@ function getDifficulty(e) {
   } else {
     words = hard[Math.floor(Math.random() * hard.length)];
   }
-
+  wordIndex = 1;
   elementString();
 }
 
@@ -251,9 +251,11 @@ const ignore = [
 
 let currentWord;
 let letterIndex = 0;
+
 document.addEventListener("keyup", (e) => {
   if (ignore.includes(e.key)) return;
   let endWpm = timePassed;
+
   currentWord = document.querySelector(`[data-word-index ="${currentIndex}"]`);
   currentLetter = currentWord.querySelectorAll("letter");
 
@@ -369,9 +371,17 @@ document.addEventListener("keyup", (e) => {
       currentIndex++;
       letterIndex = 0;
     } else incorrect++;
+    currentWord = document.querySelector(
+      `[data-word-index ="${currentIndex}"]`,
+    );
+    currentLetter = currentWord.querySelectorAll("letter");
+
+    current.classList.remove("current");
+    currentLetter[letterIndex].classList.add("current");
   } else {
     currentLetter[letterIndex].classList.add("current");
     current = document.querySelector(".current");
+
     if (e.key === current.innerText) {
       current.classList.add("correct");
       correct++;
@@ -379,9 +389,11 @@ document.addEventListener("keyup", (e) => {
       current.classList.add("incorrect");
       incorrect++;
     }
-    current.classList.remove("current");
     letterIndex++;
-    currentLetter[letterIndex].classList.add("current");
+    if (letterIndex < currentLetter.length) {
+      current.classList.remove("current");
+      currentLetter[letterIndex].classList.add("current");
+    }
   }
 
   accuracy.innerText =
