@@ -114,7 +114,7 @@ fetch("./typing-speed-test-main/data.json")
 function getDifficulty(e) {
   if (e) {
     currentDifficulty = e.target.value;
-    console.log(currentDifficulty);
+
     if (e.target.value === "easy") {
       words = easy[Math.floor(Math.random() * easy.length)];
     } else if (e.target.value === "medium") {
@@ -123,7 +123,6 @@ function getDifficulty(e) {
       words = hard[Math.floor(Math.random() * hard.length)];
     }
   } else {
-    console.log(currentDifficulty);
     if (currentDifficulty === "easy") {
       words = easy[Math.floor(Math.random() * easy.length)];
     } else if (currentDifficulty === "medium") {
