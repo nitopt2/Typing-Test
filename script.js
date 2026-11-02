@@ -42,6 +42,9 @@ let arr;
 let current;
 let lengthString;
 let currentDifficulty;
+let currentIndex = 1;
+let currentWord;
+let letterIndex = 0;
 
 const initDiff = difficultyWrapper.querySelector("div").querySelector("button");
 initDiff.classList.add("active");
@@ -102,6 +105,7 @@ fetch("./typing-speed-test-main/data.json")
 
     (function () {
       words = easy[Math.floor(Math.random() * easy.length)];
+      currentDifficulty = "easy";
       elementString();
     })();
   })
@@ -119,6 +123,7 @@ function getDifficulty(e) {
       words = hard[Math.floor(Math.random() * hard.length)];
     }
   } else {
+    console.log(currentDifficulty);
     if (currentDifficulty === "easy") {
       words = easy[Math.floor(Math.random() * easy.length)];
     } else if (currentDifficulty === "medium") {
@@ -128,6 +133,8 @@ function getDifficulty(e) {
     }
   }
 
+  currentIndex = 1;
+  letterIndex = 0;
   wordIndex = 1;
   elementString();
 }
@@ -219,7 +226,6 @@ function getWpm() {
   }, 1000);
 }
 
-let currentIndex = 1;
 let incorrect = 0;
 
 function takeTest() {
@@ -263,14 +269,12 @@ const ignore = [
   "Tab",
 ];
 
-let currentWord;
-let letterIndex = 0;
-
 document.addEventListener("keyup", (e) => {
   if (ignore.includes(e.key)) return;
   let endWpm = timePassed;
 
   currentWord = document.querySelector(`[data-word-index ="${currentIndex}"]`);
+
   currentLetter = currentWord.querySelectorAll("letter");
 
   if (testStart === false) return;
@@ -451,8 +455,6 @@ function restartTest() {
 
   accuracy.innerText = "100%";
   wpm.innerText = 0;
-
-  currentIndex = 0;
 
   select.forEach((select) => {
     select.disabled = true;
