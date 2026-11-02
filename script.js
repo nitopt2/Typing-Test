@@ -41,6 +41,7 @@ let wordIndex = 1;
 let arr;
 let current;
 let lengthString;
+let currentDifficulty;
 
 const initDiff = difficultyWrapper.querySelector("div").querySelector("button");
 initDiff.classList.add("active");
@@ -107,13 +108,26 @@ fetch("./typing-speed-test-main/data.json")
   .catch((error) => console.error("Error:", error));
 
 function getDifficulty(e) {
-  if (e.target.value === "easy") {
-    words = easy[Math.floor(Math.random() * easy.length)];
-  } else if (e.target.value === "medium") {
-    words = medium[Math.floor(Math.random() * medium.length)];
+  if (e) {
+    currentDifficulty = e.target.value;
+    console.log(currentDifficulty);
+    if (e.target.value === "easy") {
+      words = easy[Math.floor(Math.random() * easy.length)];
+    } else if (e.target.value === "medium") {
+      words = medium[Math.floor(Math.random() * medium.length)];
+    } else {
+      words = hard[Math.floor(Math.random() * hard.length)];
+    }
   } else {
-    words = hard[Math.floor(Math.random() * hard.length)];
+    if (currentDifficulty === "easy") {
+      words = easy[Math.floor(Math.random() * easy.length)];
+    } else if (currentDifficulty === "medium") {
+      words = medium[Math.floor(Math.random() * medium.length)];
+    } else {
+      words = hard[Math.floor(Math.random() * hard.length)];
+    }
   }
+
   wordIndex = 1;
   elementString();
 }
@@ -418,6 +432,8 @@ function restartTest() {
     result.classList.add("hidden");
   }
   test.classList.remove("hidden");
+
+  getDifficulty();
 
   if (formatValue === "60s") {
     incrementedTime = 60;
