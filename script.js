@@ -45,6 +45,7 @@ let currentDifficulty;
 let currentIndex = 1;
 let currentWord;
 let letterIndex = 0;
+let currentLetter;
 
 const initDiff = difficultyWrapper.querySelector("div").querySelector("button");
 initDiff.classList.add("active");
@@ -227,37 +228,6 @@ function getWpm() {
 
 let incorrect = 0;
 
-function takeTest() {
-  if (testStart === true) return;
-  restart.classList.remove("hidden");
-  getWpm();
-
-  document
-    .querySelector(".option-container-desktop")
-    .querySelectorAll("button")
-    .forEach((btn) => {
-      btn.disabled = true;
-    });
-
-  if (formatValue === "60s") {
-    timeMode();
-  } else passage();
-
-  select.forEach((select) => {
-    select.disabled = true;
-  });
-
-  testStart = true;
-  textBox.classList.remove("not-started");
-  document.querySelector(".overlay").classList.add("hidden");
-}
-
-let saveWpm;
-let saveAccuracy;
-
-start.addEventListener("click", takeTest);
-textBox.addEventListener("click", takeTest);
-
 const ignore = [
   "Shift",
   "Backspace",
@@ -385,6 +355,7 @@ document.addEventListener("keyup", (e) => {
     return;
   } else if (letterIndex === currentLetter.length) {
     if (e.key === " ") {
+      correct++;
       currentIndex++;
       letterIndex = 0;
     } else incorrect++;
@@ -411,6 +382,8 @@ document.addEventListener("keyup", (e) => {
       current.classList.remove("current");
       currentLetter[letterIndex].classList.add("current");
     }
+    if (letterIndex === currentLetter.length)
+      current.classList.remove("current");
   }
 
   accuracy.innerText =
@@ -423,6 +396,37 @@ document.addEventListener("keyup", (e) => {
     behavior: "smooth",
   });
 });
+
+function takeTest() {
+  if (testStart === true) return;
+  restart.classList.remove("hidden");
+  getWpm();
+
+  document
+    .querySelector(".option-container-desktop")
+    .querySelectorAll("button")
+    .forEach((btn) => {
+      btn.disabled = true;
+    });
+
+  if (formatValue === "60s") {
+    timeMode();
+  } else passage();
+
+  select.forEach((select) => {
+    select.disabled = true;
+  });
+
+  testStart = true;
+  textBox.classList.remove("not-started");
+  document.querySelector(".overlay").classList.add("hidden");
+}
+
+let saveWpm;
+let saveAccuracy;
+
+start.addEventListener("click", takeTest);
+textBox.addEventListener("click", takeTest);
 
 function restartTest() {
   testStart = true;

@@ -281,6 +281,7 @@ main {
 
 #text {
   display: flex;
+  position: relative;
   flex-wrap: wrap;
 }
 
@@ -307,11 +308,6 @@ main {
 .word .incorrect {
   color: hsl(354, 63%, 57%);
   text-decoration: underline;
-}
-
-.current {
-  border-radius: 0.3rem;
-  animation: smooth-blink 2s infinite;
 }
 
 @keyframes smooth-blink {
