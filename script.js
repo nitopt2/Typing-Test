@@ -241,6 +241,7 @@ const ignore = [
 
 document.addEventListener("keyup", (e) => {
   if (ignore.includes(e.key)) return;
+  input.focus();
   let endWpm = timePassed;
 
   currentWord = document.querySelector(`[data-word-index ="${currentIndex}"]`);
@@ -434,9 +435,9 @@ function takeTest() {
 
 start.addEventListener("click", takeTest);
 textBox.addEventListener("click", takeTest);
+textBox.addEventListener("click", input.focus());
 
 function restartTest() {
-  input.focus();
   testStart = true;
   timePassed = 0;
   restart.style.color = "white";
