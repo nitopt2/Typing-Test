@@ -61,6 +61,11 @@ main {
   padding: 1em;
 }
 
+#type-input {
+  position: absolute;
+  opacity: 0;
+}
+
 .score {
   display: flex;
   align-items: center;
@@ -275,6 +280,7 @@ option:checked span::before {
 #time {
   color: hsl(49, 85%, 70%);
 }
+
 main {
   position: relative;
 }

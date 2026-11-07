@@ -46,6 +46,7 @@ let currentIndex = 1;
 let currentWord;
 let letterIndex = 0;
 let currentLetter;
+let input = document.getElementById("type-input");
 
 const initDiff = difficultyWrapper.querySelector("div").querySelector("button");
 initDiff.classList.add("active");
@@ -278,7 +279,6 @@ document.addEventListener("keyup", (e) => {
     if (timePassed < 1) timePassed = 1;
 
     graphTime.push(1);
-    baseTime = timePassed; //Helps configure graph points
 
     while (timePassed <= endWpm) {
       if (timePassed < endWpm) {
@@ -286,7 +286,7 @@ document.addEventListener("keyup", (e) => {
       }
 
       graphWpm.push(wpmList[timePassed - 1]); //Pull from array the plotted wpm
-      timePassed = baseTime + timePassed;
+      timePassed++;
     }
     if (chart) {
       chart.data.datasets[0].data = graphWpm;
@@ -397,11 +397,14 @@ document.addEventListener("keyup", (e) => {
   });
 });
 
+let saveWpm;
+let saveAccuracy;
+
 function takeTest() {
   if (testStart === true) return;
   restart.classList.remove("hidden");
   getWpm();
-
+  input.focus();
   document
     .querySelector(".option-container-desktop")
     .querySelectorAll("button")
@@ -420,15 +423,20 @@ function takeTest() {
   testStart = true;
   textBox.classList.remove("not-started");
   document.querySelector(".overlay").classList.add("hidden");
-}
 
-let saveWpm;
-let saveAccuracy;
+  textBox.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") restartTest();
+    if (e.shiftKey) {
+      if (e.key === "Alt") restartTest();
+    }
+  });
+}
 
 start.addEventListener("click", takeTest);
 textBox.addEventListener("click", takeTest);
 
 function restartTest() {
+  input.focus();
   testStart = true;
   timePassed = 0;
   restart.style.color = "white";
@@ -469,11 +477,5 @@ function restartTest() {
   }
   getWpm();
 }
-
-document.addEventListener("keydown", (e) => {
-  if (e.shiftKey) {
-    if (e.key === "Alt") restartTest();
-  }
-});
 
 restart.addEventListener("mousedown", restartTest);
